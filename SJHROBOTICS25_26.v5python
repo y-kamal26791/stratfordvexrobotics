@@ -1,0 +1,209 @@
+#region VEXcode Generated Robot Configuration
+from vex import *
+import urandom
+import math
+
+# Brain should be defined by default
+brain=Brain()
+
+# Robot configuration code
+controller_1 = Controller(PRIMARY)
+left_motor = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
+right_motor = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False)
+motor_arm = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
+motor_claw = Motor(Ports.PORT4, GearSetting.RATIO_18_1, False)
+
+
+# wait for rotation sensor to fully initialize
+wait(30, MSEC)
+
+
+# Make random actually random
+def initializeRandomSeed():
+    wait(100, MSEC)
+    random = brain.battery.voltage(MV) + brain.battery.current(CurrentUnits.AMP) * 100 + brain.timer.system_high_res()
+    urandom.seed(int(random))
+      
+# Set random seed 
+initializeRandomSeed()
+
+
+def play_vexcode_sound(sound_name):
+    # Helper to make playing sounds from the V5 in VEXcode easier and
+    # keeps the code cleaner by making it clear what is happening.
+    print("VEXPlaySound:" + sound_name)
+    wait(5, MSEC)
+
+# add a small delay to make sure we don't print in the middle of the REPL header
+wait(200, MSEC)
+# clear the console to make sure we don't have the REPL in the console
+print("\033[2J")
+
+#endregion VEXcode Generated Robot Configuration
+
+# ------------------------------------------
+# 
+# 	Project:      VEXcode Project
+#	Author:       SJH Robotics 2025/2026
+#	Created:
+#	Description:  VEXcode V5(EDR) Python
+# 
+# ------------------------------------------
+
+# Library imports
+from vex import *
+
+# Begin project code
+while True:
+
+   #axis3pos
+    if controller.axis3.position() >=-1 and controller_1,axis3.position() <= 1:
+        x = True
+
+        else:
+            x = False
+
+
+    #axis4pos
+    if controller_1.axis4.position() >= -1 and controller_1.axis4.position() <= 1:
+        y = True
+
+        else:
+            y = False
+
+
+
+    #axis1pos
+    if controller_1.axis1.position() >= -1 and controller_1.axis1.position() <= 1:
+        z = True
+
+        else:
+            z = False
+
+
+    #axis2pos
+    if controller_1.axis2.position() >= -1 and controller_1.axis2.position() <= 1:
+        a = True
+
+        else:
+            a = False
+
+    #forward/backward
+    if x = False:
+        left_motor.set_velocity(controller_1.axis3.position(),PERCENT)
+        right_motor.set_velocity(controller_1.axis3.position(),PERCENT)
+
+    #turn
+    elif x = True and y = False:
+        if controller_1.axis4.position() >= 1:
+            left_motor.set_velocity(controller_1.axis4.position() +50,PERCENT)
+            right_motor.set_velocity(controller_1.axis4.position() -50,PERCENT)
+
+        if controller_1.axis4.position() <= -1:
+            left_motor.set_velocity(controller_1.axis4.position() *-1 -50,PERCENT)
+            right_motor.set_velocity(controller_1.axis4.position() *-1 +50,PERCENT)
+    #arm
+    if z = False:
+        motor_arm.set_velocity(controller_1.axis1.position(),PERCENT)
+        else:
+            motor_arm.set_stopping(HOLD)
+
+    #claw
+    if a = False:
+        if controller_1.axis2.position() >= 1:
+            motor_claw.spin_to_position(90,DEGREES,wait=False)
+        elif controller_1.axis2.position() <=-1:
+            motor_claw.spin_to_position(-90,DEGREES,wait=False)
+
+
+    def R1():
+        motor_arm.set_stopping(BRAKE)
+        motor_claw.set_stopping(BRAKE)
+        left_motor.set_stopping(BRAKE)
+        right_motor.set_stopping(BRAKE)
+        left_motor.spin_for(FORWARD,5,TURNS,wait=False)
+        right_motor.spin_for(REVERSE, 5,TURNS,wait=False)
+
+
+    def L1():
+        motor_arm.set_stopping(BRAKE)
+        motor_claw.set_stopping(BRAKE)
+        left_motor.set_stopping(BRAKE)
+        right_motor.set_stopping(BRAKE)
+        left_motor.spin_for(REVERSE,5,TURNS,wait=False)
+        right_motor.spin_for(FORWARD, 5,TURNS,wait=False)
+
+
+
+    controller_1.buttonR1.pressed(R1)
+    controller_1.buttonL1.pressed(L1)
+        
+
+    def battery_voltage_check():
+        controller_1.screen.print(brain.battery.voltage(VoltageUnits.VOLT))
+
+    def battery_current_check():
+        controller_1.screen.print(brain.battery.current(CurrentUnits.AMP))
+    
+    
+    def battery_capacity_check():
+        controller_1.screen.print(brain.battery.capacity())
+
+
+
+    controller_1.buttonUp.pressed(battery_voltage_check)
+    controller_1.buttonLeft.pressed(battery_current_check)
+    controller_1.buttonRight.pressed(battery_capacity_check)
+
+    if controller_1.buttonDown.pressing():
+        controller_1.screen.clear_screen()
+        brain.screen.clear_screen()
+
+
+
+    def emergency_stop:
+        motor_arm.set_stopping(BRAKE)
+        motor_claw.set_stopping(BRAKE)
+        left_motor.set_stopping(BRAKE)
+        right_motor.set_stopping(BRAKE)
+        controller_1.rumble(".-.-")
+        controller_1.screen.print("EMERGENCY STOP")
+        brain.screen.print("EMERGENCY STOP")
+
+
+    def hold_all:
+        motor_arm.set_stopping(HOLD)
+        motor_claw.set_stopping(HOLD)
+        left_motor.set_stopping(HOLD)
+        right_motor.set_stopping(HOLD)
+        controller_1.rumble("-.-.")
+        controller_1.screen.print("HOLD POSITION")
+        brain.screen.print("HOLD POSITION")
+
+    controller_1.buttonR2.pressed(emergency_stop)
+    controller_1.buttonL2.pressed(hold_all)
+
+    #idle
+    if x = True and y = True and z = True and x = True:
+        controller.screen.print ("No Input Detected")
+        brain.screen.print("Idle")
+        
+        else brain.screen.clear_screen
+
+
+
+    #shutdown
+    if controller_1.buttonL1.pressing() and controller_1.buttonL2.pressing() and controller_1.buttonR1.pressing() and controller_1.buttonR2.pressing():
+        controller_1.screen.print ("EMERGENCY SHUTDOWN")
+        controller_1.rumble ("---...---")
+        brain.screen.print ("EMERGENCY SHUTDOWN")
+        brain.program_stop()
+    
+
+
+    left_motor.spin(FORWARD)
+    right_motor.spin(FORWARD)
+
+
+
+    wait(20,MSEC)
